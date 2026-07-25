@@ -124,16 +124,20 @@ if (session_status() === PHP_SESSION_NONE) {
     ]);
 }
 
+if (!defined('FRONT_CONTROLLER')) {
+    define('FRONT_CONTROLLER', 'index.html');
+}
+
 if (!function_exists('url_to')) {
     function url_to(string $path = ''): string
     {
         $base = rtrim(BASE_URL, '/');
 
-        if ($path === '' || $path === 'index.php') {
-            return $base . '/index.php';
+        if ($path === '' || $path === 'index.php' || $path === FRONT_CONTROLLER) {
+            return $base . '/' . FRONT_CONTROLLER;
         }
 
-        return $base . '/index.php/' . ltrim($path, '/');
+        return $base . '/' . FRONT_CONTROLLER . '/' . ltrim($path, '/');
     }
 }
 

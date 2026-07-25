@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Portafolio Académico Inteligente</title>
+</head>
+<body>
 <?php
 declare(strict_types=1);
 
@@ -11,6 +19,7 @@ if (!function_exists('router_request_path')) {
             return $pathInfo;
         }
 
+        $frontController = '/' . FRONT_CONTROLLER;
         $candidates = [
             $_SERVER['REDIRECT_URL'] ?? null,
             $_SERVER['ORIGINAL_URI'] ?? null,
@@ -32,11 +41,15 @@ if (!function_exists('router_request_path')) {
                 $path = substr($path, strlen($basePath)) ?: '/';
             }
 
+            if (str_starts_with($path, $frontController . '/')) {
+                return substr($path, strlen($frontController)) ?: '/';
+            }
+
             if (str_starts_with($path, '/index.php/')) {
                 return substr($path, strlen('/index.php')) ?: '/';
             }
 
-            if ($path === '/index.php' || $path === '/') {
+            if ($path === $frontController || $path === '/index.php' || $path === '/') {
                 continue;
             }
 
@@ -51,7 +64,7 @@ $uriPath = router_request_path();
 $uriPath = '/' . ltrim($uriPath, '/');
 $relativePath = ltrim($uriPath, '/');
 
-if ($uriPath === '/' || $relativePath === 'index.php') {
+if ($uriPath === '/' || $relativePath === FRONT_CONTROLLER || $relativePath === 'index.php') {
     require __DIR__ . '/PHP/pages/index.php';
     exit;
 }
@@ -76,4 +89,11 @@ if (is_file($indexFile)) {
 
 http_response_code(404);
 header('Content-Type: text/html; charset=UTF-8');
-echo '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>No encontrado</title></head><body><h1>404</h1><p>La ruta solicitada no existe.</p><p><a href="' . htmlspecialchars(url_to('index.php'), ENT_QUOTES, 'UTF-8') . '">Volver al inicio</a></p></body></html>';
+?>
+    <main id="contenido-principal">
+        <h1>404</h1>
+        <p>La ruta solicitada no existe.</p>
+        <p><a href="<?= htmlspecialchars(url_to(''), ENT_QUOTES, 'UTF-8'); ?>">Volver al inicio</a></p>
+    </main>
+</body>
+</html>

@@ -3,7 +3,7 @@ declare(strict_types=1);
 ?>
 <nav class="navbar navbar-expand-lg app-navbar" aria-label="Navegación principal">
     <div class="container-fluid px-3 px-lg-4">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="<?= e(url_to('index.php')); ?>">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="<?= e(url_to('')); ?>">
             <?php $logoVariant = 'compact'; require __DIR__ . '/logo-brand.php'; ?>
         </a>
 

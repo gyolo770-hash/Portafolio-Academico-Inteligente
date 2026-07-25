@@ -3,7 +3,7 @@ declare(strict_types=1);
 ?>
 <header class="dashboard-header" aria-label="Barra superior del panel">
     <div class="dashboard-header-start">
-        <a class="dashboard-header-brand" href="<?= e(url_to('index.php')); ?>">
+        <a class="dashboard-header-brand" href="<?= e(url_to('')); ?>">
             <?php $logoVariant = 'compact'; require __DIR__ . '/logo-brand.php'; ?>
         </a>
     </div>
