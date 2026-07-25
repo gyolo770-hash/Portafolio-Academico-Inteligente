@@ -1,0 +1,5 @@
+.env
+client_secret*.json
+PHP/config/database.php
+PHP/storage/jwt.secret
+PHP/storage/mail/

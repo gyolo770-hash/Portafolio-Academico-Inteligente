@@ -1,0 +1,22 @@
+DirectoryIndex index.php
+AcceptPathInfo On
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /PortafolioAcademico/
+
+    RewriteRule ^public/assets/css/(.*)$ CSS/$1 [R=302,L]
+    RewriteRule ^public/assets/js/(.*)$ JS/$1 [R=302,L]
+    RewriteRule ^public/assets/img/(.*)$ Images/$1 [R=302,L]
+    RewriteRule ^public/(.*)$ $1 [R=302,L]
+
+    RewriteRule ^css/(.*)$ CSS/$1 [R=302,L]
+    RewriteRule ^js/(.*)$ JS/$1 [R=302,L]
+    RewriteRule ^images/(.*)$ Images/$1 [R=302,L]
+
+    RewriteRule ^(CSS|JS|Images)/ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+</IfModule>

@@ -1,0 +1,79 @@
+<?php
+declare(strict_types=1);
+
+require __DIR__ . '/PHP/config/app.php';
+
+if (!function_exists('router_request_path')) {
+    function router_request_path(): string
+    {
+        $pathInfo = $_SERVER['PATH_INFO'] ?? '';
+        if (is_string($pathInfo) && $pathInfo !== '' && $pathInfo !== '/') {
+            return $pathInfo;
+        }
+
+        $candidates = [
+            $_SERVER['REDIRECT_URL'] ?? null,
+            $_SERVER['ORIGINAL_URI'] ?? null,
+            $_SERVER['REQUEST_URI'] ?? '/',
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (!is_string($candidate) || $candidate === '') {
+                continue;
+            }
+
+            $path = parse_url($candidate, PHP_URL_PATH) ?: '';
+            if ($path === '') {
+                continue;
+            }
+
+            $basePath = parse_url(BASE_URL, PHP_URL_PATH) ?: '';
+            if ($basePath !== '' && $basePath !== '/' && strncmp($path, $basePath, strlen($basePath)) === 0) {
+                $path = substr($path, strlen($basePath)) ?: '/';
+            }
+
+            if (str_starts_with($path, '/index.php/')) {
+                return substr($path, strlen('/index.php')) ?: '/';
+            }
+
+            if ($path === '/index.php' || $path === '/') {
+                continue;
+            }
+
+            return $path;
+        }
+
+        return '/';
+    }
+}
+
+$uriPath = router_request_path();
+$uriPath = '/' . ltrim($uriPath, '/');
+$relativePath = ltrim($uriPath, '/');
+
+if ($uriPath === '/' || $relativePath === 'index.php') {
+    require __DIR__ . '/PHP/pages/index.php';
+    exit;
+}
+
+if (preg_match('#^p/([a-zA-Z0-9_-]+)/?$#', $relativePath, $matches)) {
+    $_GET['slug'] = $matches[1];
+    require __DIR__ . '/PHP/pages/portfolio/index.php';
+    exit;
+}
+
+$pageFile = __DIR__ . '/PHP/pages/' . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+if (is_file($pageFile)) {
+    require $pageFile;
+    exit;
+}
+
+$indexFile = __DIR__ . '/PHP/pages/' . str_replace('/', DIRECTORY_SEPARATOR, $relativePath) . DIRECTORY_SEPARATOR . 'index.php';
+if (is_file($indexFile)) {
+    require $indexFile;
+    exit;
+}
+
+http_response_code(404);
+header('Content-Type: text/html; charset=UTF-8');
+echo '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>No encontrado</title></head><body><h1>404</h1><p>La ruta solicitada no existe.</p><p><a href="' . htmlspecialchars(url_to('index.php'), ENT_QUOTES, 'UTF-8') . '">Volver al inicio</a></p></body></html>';
